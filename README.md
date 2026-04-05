@@ -48,27 +48,12 @@ enterprise-ai-agents/
 ### Using an Agent
 
 1. Clone this repository
-2. Open the repo directory in Claude Code
+2. Open the repo directory in choice of your ai tools such as github copilot, claude code
 3. Run `/agents` to see available agents, or invoke directly:
 
 ```
 @agent-paloalto-technical-advisor Summarize the known issues in PAN-OS 11.2.10
 ```
-
-Agents are discovered from the `.claude/agents/` directory at the project root. Each agent's `agent.md` file contains the full definition with YAML frontmatter.
-
-### Creating a New Agent
-
-1. Copy `_templates/agent-template.md` into the appropriate vendor directory:
-   ```
-   <vendor>/agents/<agent-name>/agent.md
-   ```
-2. Add the required YAML frontmatter (`name`, `description`) and agent instructions
-3. Copy or symlink the file to `.claude/agents/<agent-name>.md` for Claude Code discovery
-
-See the [Palo Alto technical-advisor](paloalto/agents/technical-advisor/agent.md) for a complete example.
-
----
 
 ## Vendor Directories
 
