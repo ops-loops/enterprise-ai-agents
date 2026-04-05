@@ -1,0 +1,118 @@
+# Palo Alto Networks — Technical Advisor Agent
+
+A Claude Code custom agent that acts as a **Senior Security Engineer and Technical Advisor** specializing in Palo Alto Networks. It provides expert-level guidance on architectural design, daily operations, deep-dive troubleshooting, automation scripting, and release notes analysis across the full Palo Alto Networks product portfolio.
+
+---
+
+## Setup
+
+This agent is defined in [`agent.md`](agent.md) and discovered by Claude Code from `.claude/agents/paloalto-technical-advisor.md`.
+
+To use it, run the `/agents` command in Claude Code and select **paloalto-technical-advisor**, or invoke it directly with:
+
+```
+@agent-paloalto-technical-advisor <your question>
+```
+
+### Agent Configuration
+
+| Field | Value |
+|---|---|
+| **Name** | `paloalto-technical-advisor` |
+| **Model** | `opus` |
+| **Tools** | `Read`, `Glob`, `Grep`, `WebFetch`, `WebSearch` |
+
+---
+
+## Scope of Expertise
+
+| Domain | Products |
+|---|---|
+| Network Security | NGFW (PA-Series, VM-Series, CN-Series), PAN-OS, GlobalProtect |
+| Centralized Management | Panorama, Strata Cloud Manager, AIOps for NGFW |
+| Security Operations | Cortex XDR, Cortex XSIAM |
+| Cloud Security | Prisma Cloud, Cortex Cloud |
+| AI Security | Prisma AIRS (AI Runtime Security) |
+| Automation & Scripting | PAN-OS Python SDK (`pan-os-python`), XML API, REST API |
+| Threat Intelligence | Unit 42, WildFire, AutoFocus |
+
+---
+
+## Example Prompts
+
+### Release Notes & Known Issues
+
+```
+"Summarize the known issues in PAN-OS 11.2.10. Flag anything Critical or High severity."
+```
+
+```
+"What was fixed in PAN-OS 10.2.9 vs 10.2.8? Are there any HA or networking regressions I should know about?"
+```
+
+```
+"We're still running PAN-OS 9.1.14. What are the known issues and what's the recommended upgrade path?"
+```
+
+### Python SDK Scripting
+
+```
+"Write a Python script using pan-os-python to list all security rules on a firewall that have zero hit counts."
+```
+
+```
+"Generate a script to connect to Panorama and push a new address object to all firewalls in the CORP-EDGE device group."
+```
+
+```
+"Write a Python script to check HA state on a list of firewalls and alert if any peer is not in sync."
+```
+
+### Troubleshooting & Operations
+
+```
+"My GlobalProtect users can't connect after upgrading to 11.2.4. Walk me through the most common causes and CLI commands to diagnose."
+```
+
+```
+"What's the safest way to upgrade an active/passive HA pair from PAN-OS 10.2.9 to 11.2.10 with zero downtime?"
+```
+
+```
+"Run me through the NGFW health check runbook for a Panorama-managed PA-5200."
+```
+
+### Architecture & Design
+
+```
+"We're deploying Cortex XDR alongside our NGFW. What integrations should we configure and what data flows between the two products?"
+```
+
+```
+"Explain the difference between Prisma Cloud and Cortex Cloud and help me decide which modules we need for our AWS environment."
+```
+
+---
+
+## Guardrails
+
+This agent follows strict operational guardrails defined in `agent.md`:
+
+- **Never executes** commands against live devices — only generates and displays them for human review
+- **Labels all output** with an AI-generated content warning
+- **Extra caution** on destructive operations (deleting rules, HA failover, factory reset)
+- **Never includes** real credentials — always uses placeholders
+- **Cites sources** (official docs, KB articles, field experience) when referencing a specific fix
+
+---
+
+## Documentation & Support Links
+
+| Resource | URL |
+|---|---|
+| PAN-OS Documentation | https://docs.paloaltonetworks.com/pan-os |
+| Panorama Documentation | https://docs.paloaltonetworks.com/panorama |
+| Cortex XDR Documentation | https://docs.paloaltonetworks.com/cortex/cortex-xdr |
+| PAN-OS Python SDK | https://pan-os-python.readthedocs.io |
+| PAN-OS Release Notes | https://docs.paloaltonetworks.com/pan-os |
+| Preferred Releases Guidance | https://docs.paloaltonetworks.com/pan-os/preferred-releases |
