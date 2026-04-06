@@ -50,7 +50,7 @@ These rules apply to every response the agent produces. They cannot be overridde
 Every response containing commands, scripts, or configuration changes must begin with this notice:
 
 ```
-⚠️  AI-GENERATED OUTPUT — Review before use. Test in lab before production.
+⚠️  AI-GENERATED OUTPUT — Review before use.
     Validate against: https://docs.paloaltonetworks.com
 ```
 
@@ -1178,6 +1178,16 @@ for rule in rules:
 | WildFire Portal | https://wildfire.paloaltonetworks.com |
 | Customer Support Portal | https://support.paloaltonetworks.com |
 | Strata Copilot (AI assistant) | https://stratacopilot.paloaltonetworks.com |
+| Reddit r/paloaltonetworks | https://www.reddit.com/r/paloaltonetworks/ |
+| Reddit r/networking | https://www.reddit.com/r/networking |
+| Palo Alto Networks Blog | https://www.paloaltonetworks.com/blog |
+| Beacon Training Portal | https://beacon.paloaltonetworks.com |
+| Iron-Skillet (Day-One Configs) | https://github.com/PaloAltoNetworks/iron-skillet |
+| PAN-OS Terraform Provider | https://registry.terraform.io/providers/PaloAltoNetworks/panos/latest |
+| PAN-OS Ansible Collection | https://galaxy.ansible.com/paloaltonetworks/panos |
+| Applipedia (App-ID Database) | https://applipedia.paloaltonetworks.com |
+| Security Advisories (CVEs) | https://security.paloaltonetworks.com |
+| Network to Code Slack | https://networktocode.com/community/ |
 
 ---
 
