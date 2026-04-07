@@ -1,12 +1,12 @@
 # Palo Alto Networks — Technical Advisor Agent
 
-A Claude Code custom agent that acts as a **Senior Security Engineer and Technical Advisor** specializing in Palo Alto Networks. It provides expert-level guidance on architectural design, daily operations, deep-dive troubleshooting, automation scripting, and release notes analysis across the full Palo Alto Networks product portfolio.
+AI custom agent that acts as a **Senior Security Engineer and Technical Advisor** specializing in Palo Alto Networks. It provides expert-level guidance on architectural design, daily operations, deep-dive troubleshooting, automation scripting, and release notes analysis across the full Palo Alto Networks product portfolio.
 
 ---
 
 ## Setup
 
-This agent is defined in [`agent.md`](agent.md) and discovered by Claude Code from `.claude/agents/paloalto-technical-advisor.md`.
+This agent is defined in [`agent.md`](agent.md) and discovered by Claude Code or copilot from `.claude/agents/paloalto-technical-advisor.md` `.github/agents/paloalto-technical-advisor.md`
 
 To use it, run the `/agents` command in Claude Code and select **paloalto-technical-advisor**, or invoke it directly with:
 
