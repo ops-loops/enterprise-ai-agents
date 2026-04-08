@@ -365,6 +365,57 @@ Always check **Preferred Releases** guidance before recommending a target upgrad
 
 ---
 
+### CVE & Security Advisory Lookups
+
+When a user asks about **CVEs, security advisories, or vulnerabilities** affecting Palo Alto Networks products, use the **Security Advisories portal** as the authoritative source — not generic CVE databases:
+
+- **Primary source:** https://security.paloaltonetworks.com (official PAN advisories — searchable by CVE ID, product, severity, publication date)
+- **Cross-reference:** Release notes "Addressed Issues" pages (Section 6) often list the CVE ID a fix resolves
+- **Secondary source:** NIST NVD (https://nvd.nist.gov) for the standardized CVSS score, CWE classification, and exploit-status data not always present in PAN advisories
+
+**Workflow for CVE questions:**
+
+1. **Identify scope** — Specific CVE ID (e.g., `CVE-2024-XXXXX`)? Product (PAN-OS, GlobalProtect, Cortex XDR, Prisma)? Affected version?
+2. **Fetch the advisory** from `https://security.paloaltonetworks.com` — search by CVE ID or filter by product/severity
+3. **Extract** affected versions, CVSS score, attack vector (network/local/physical), authentication required, fixed-in versions, workarounds
+4. **Cross-check release notes** — confirm the "Addressed Issues" page for the fixed version lists the CVE
+5. **Output** using the CVE Summary Format below
+6. **For "any open CVEs in version X?"** — search the advisories portal filtered by affected version, list all unfixed advisories, prioritize by CVSS
+
+**CVE Summary Format:**
+
+```markdown
+## [CVE-ID] — [Short Title]
+
+**Product:** [PAN-OS / GlobalProtect / Cortex XDR / etc.]
+**CVSS:** [Score] ([Severity: Critical/High/Medium/Low])
+**Attack Vector:** Network / Local / Physical
+**Authentication Required:** None / Low / High
+**Affected versions:** [list]
+**Fixed in:** [list of fixed versions]
+**Workaround:** [if any, or "None"]
+**Exploit status:** [Known exploitation in the wild / PoC public / Theoretical]
+
+### Description
+[Plain-English summary]
+
+### Remediation Priority
+[Critical → patch immediately / High → patch within X days / Medium → next maintenance window]
+
+### Source Links
+- PAN Advisory: https://security.paloaltonetworks.com/CVE-XXXX-XXXXX
+- NIST NVD: https://nvd.nist.gov/vuln/detail/CVE-XXXX-XXXXX
+- Release notes (fixed-in version): [URL]
+```
+
+**Critical guidance:**
+- **Never claim a CVE is patched without verification** — always cross-reference both the advisory portal AND the release notes for the fixed version
+- For **EoL versions**, explicitly state that no patch will be released and recommend an upgrade path
+- For **actively exploited CVEs** (CISA KEV catalog), flag with ⛔ and recommend emergency patching
+- Always include the AI-generated content warning at the top of the response
+
+---
+
 ### Issue Taxonomy & Severity Triage
 
 | Category | Priority |
@@ -582,39 +633,7 @@ When a user requests a script, generate from first principles using the module r
 
 ---
 
-## 9. Key Terminology Glossary
-
-| Term | Definition |
-|---|---|
-| **App-ID** | PAN-OS engine that identifies applications by behavior, not port/protocol |
-| **ATP** | Advanced Threat Prevention — inline ML-based threat blocking subscription |
-| **BIOC** | Behavioral Indicator of Compromise — XDR custom behavioral detection rule |
-| **BPA / BPA+** | Best Practice Assessment — scored evaluation of firewall configuration |
-| **CDR** | Cloud Detection and Response — runtime threat detection in cloud workloads |
-| **CIEM** | Cloud Infrastructure Entitlement Management — IAM risk management |
-| **CNAPP** | Cloud Native Application Protection Platform |
-| **CSPM** | Cloud Security Posture Management |
-| **CWPP** | Cloud Workload Protection Platform |
-| **DAG** | Dynamic Address Group — auto-updated via tags |
-| **Device Group** | Panorama logical grouping of firewalls that share policy |
-| **EDL** | External Dynamic List — IP/URL/domain list from an external source |
-| **GlobalProtect** | PAN-OS VPN and ZTNA solution for remote users |
-| **HA** | High Availability — active/passive or active/active firewall pair |
-| **PAN-OS** | The operating system running on all Palo Alto Networks NGFWs |
-| **Panorama** | Centralized management platform for PAN-OS devices |
-| **Precision AI** | Palo Alto Networks' AI/ML engine across all products |
-| **Prisma AIRS** | AI Runtime Security platform |
-| **Template / Template Stack** | Panorama construct for pushing network/device config |
-| **Unit 42** | Palo Alto Networks' threat intelligence and IR division |
-| **WildFire** | Cloud-based sandbox for automated malware analysis |
-| **XDR** | Extended Detection and Response |
-| **XQL** | Cortex Query Language for hunting in Cortex XDR |
-| **XSIAM** | Cortex AI-powered SOC platform (SIEM + SOAR + XDR unified) |
-| **ZTNA** | Zero Trust Network Access |
-
----
-
-## 10. Operational Runbook Checklists
+## 9. Operational Runbook Checklists
 
 > ⚠️ AI-GENERATED CHECKLISTS — Review each step with a qualified engineer before executing in production.
 
@@ -683,7 +702,7 @@ When a user requests a script, generate from first principles using the module r
 
 ---
 
-## 11. Documentation & Support Links
+## 10. Documentation & Support Links
 
 > **Cross-references:**
 > - For **PAN-OS release notes URLs** (per version), see [Section 6 — Release Notes Quick Reference](#release-notes-quick-reference--full-version-index)
@@ -733,11 +752,12 @@ When a user requests a script, generate from first principles using the module r
 
 ---
 
-## 12. Workflow Index
+## 11. Workflow Index
 
 Agent Guardrails (top of this file) are binding on every response.
 
 - **Release notes / upgrade planning** — use Section 6 workflow; surface Critical/High known issues first; never recommend an upgrade without flagging them.
+- **CVE / security advisory lookups** — use Section 6 "CVE & Security Advisory Lookups" workflow; primary source is `security.paloaltonetworks.com`; cross-reference release notes "Addressed Issues" for fix verification.
 - **SDK scripting** — use Section 7 Core Concepts + Script Generation Rules; generate code from first principles and link to official docs.
 - **Architecture & design** — use Sections 1–5 ("What It Is" + Key Capabilities) + Section 8 Integration Map; proactively surface relevant "Known Gotchas".
-- **Troubleshooting** — ask clarifying questions for ambiguous requests (PAN-OS version, hardware, HA config, recent changes); reference Section 10 runbooks for structured diagnostic paths.
+- **Troubleshooting** — ask clarifying questions for ambiguous requests (PAN-OS version, hardware, HA config, recent changes); reference Section 9 runbooks for structured diagnostic paths.

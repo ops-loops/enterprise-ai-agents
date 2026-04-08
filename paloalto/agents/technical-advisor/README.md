@@ -82,6 +82,20 @@ To use it, run the `/agents` command in Claude Code and select **paloalto-techni
 "Run me through the NGFW health check runbook for a Panorama-managed PA-5200."
 ```
 
+### CVE & Security Advisories
+
+```
+"Look up CVE-2024-3400 — what's the impact, affected versions, and recommended remediation?"
+```
+
+```
+"Are there any open Critical or High severity CVEs affecting PAN-OS 11.2.x right now?"
+```
+
+```
+"We're running PAN-OS 10.2.9 — list all CVEs that have been patched in newer 10.2.x releases."
+```
+
 ### Architecture & Design
 
 ```
@@ -118,6 +132,40 @@ This agent follows strict operational guardrails defined in `agent.md`:
 | Preferred Releases Guidance | https://docs.paloaltonetworks.com/pan-os/preferred-releases |
 
 
+## Key Terminology Glossary
+
+Quick reference for acronyms used throughout the Palo Alto Networks portfolio (removed from `agent.md` — modern LLMs already know these terms, but humans may want a lookup).
+
+| Term | Definition |
+|---|---|
+| **App-ID** | PAN-OS engine that identifies applications by behavior, not port/protocol |
+| **ATP** | Advanced Threat Prevention — inline ML-based threat blocking subscription |
+| **BIOC** | Behavioral Indicator of Compromise — XDR custom behavioral detection rule |
+| **BPA / BPA+** | Best Practice Assessment — scored evaluation of firewall configuration |
+| **CDR** | Cloud Detection and Response — runtime threat detection in cloud workloads |
+| **CIEM** | Cloud Infrastructure Entitlement Management — IAM risk management |
+| **CNAPP** | Cloud Native Application Protection Platform |
+| **CSPM** | Cloud Security Posture Management |
+| **CWPP** | Cloud Workload Protection Platform |
+| **DAG** | Dynamic Address Group — auto-updated via tags |
+| **Device Group** | Panorama logical grouping of firewalls that share policy |
+| **EDL** | External Dynamic List — IP/URL/domain list from an external source |
+| **GlobalProtect** | PAN-OS VPN and ZTNA solution for remote users |
+| **HA** | High Availability — active/passive or active/active firewall pair |
+| **PAN-OS** | The operating system running on all Palo Alto Networks NGFWs |
+| **Panorama** | Centralized management platform for PAN-OS devices |
+| **Precision AI** | Palo Alto Networks' AI/ML engine across all products |
+| **Prisma AIRS** | AI Runtime Security platform |
+| **Template / Template Stack** | Panorama construct for pushing network/device config |
+| **Unit 42** | Palo Alto Networks' threat intelligence and IR division |
+| **WildFire** | Cloud-based sandbox for automated malware analysis |
+| **XDR** | Extended Detection and Response |
+| **XQL** | Cortex Query Language for hunting in Cortex XDR |
+| **XSIAM** | Cortex AI-powered SOC platform (SIEM + SOAR + XDR unified) |
+| **ZTNA** | Zero Trust Network Access |
+
+---
+
 ## For Human Engineers
 
 ### `agent.md` Section Index
@@ -135,10 +183,9 @@ This agent follows strict operational guardrails defined in `agent.md`:
 | 6 | Release Notes | Version index, URL templates, workflow, output format, severity triage |
 | 7 | PAN-OS Python SDK | Core concepts, script generation rules, official doc references |
 | 8 | Cross-Product Integration Map | How products fit together |
-| 9 | Key Terminology Glossary | Acronym reference |
-| 10 | Operational Runbook Checklists | NGFW, Panorama, XDR, Cortex Cloud, Prisma AIRS |
-| 11 | Documentation & Support Links | Official docs, community, training, automation |
-| 12 | Workflow Index | Quick pointers for common user request types |
+| 9 | Operational Runbook Checklists | NGFW, Panorama, XDR, Cortex Cloud, Prisma AIRS |
+| 10 | Documentation & Support Links | Official docs, community, training, automation |
+| 11 | Workflow Index | Quick pointers for common user request types |
 
 ### How to use it
 
