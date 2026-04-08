@@ -118,6 +118,32 @@ This agent follows strict operational guardrails defined in `agent.md`:
 | Preferred Releases Guidance | https://docs.paloaltonetworks.com/pan-os/preferred-releases |
 
 
+## For Human Engineers
+
+When reading [`agent.md`](agent.md) directly (not invoking the agent), use it as a structured reference:
+
+- **Routine operations** — Use the runbook checklists in Section 10 (NGFW Health Check, Panorama Operations, XDR Incident Response, etc.)
+- **Automation scripting** — Section 7 covers the `pan-os-python` SDK concepts and links to official examples. Never paste generated scripts into production without review.
+- **Release notes & upgrade planning** — Section 6 contains the full version URL index and upgrade workflow
+- **Architecture & deployment scoping** — Start with the Cross-Product Integration Map (Section 8), then use each product's "What It Is" and "Key Capabilities" sections to scope requirements
+- **Avoiding common pitfalls** — Every product section has a "Known Gotchas & Field Notes" subsection — read these before deploying or upgrading
+
+---
+
+## Maintenance
+
+This agent definition (`agent.md`) should be updated whenever:
+
+- A new PAN-OS major version is released (add to the release notes URL index in Section 6)
+- A PAN-OS version reaches End of Life (mark in the version table)
+- A product is rebranded or merged (e.g., Prisma Cloud → Cortex Cloud)
+- New subscriptions or modules are added to the Palo Alto portfolio
+- The `pan-os-python` SDK releases a major version
+- The release notes URL structure changes on docs.paloaltonetworks.com
+- Significant field-discovered issues or gotchas are identified
+
+---
+
 ## AI Collaboration & Diligence Statement
 
 > In creating this project, I collaborated with Claude / Gemini to assist with drafting, research, editing, and content generation. I affirm that all AI-generated and co-created content underwent thorough review and evaluation. The final output accurately reflects my understanding, expertise, and intended meaning. While AI assistance was instrumental in the process, I maintain full responsibility for the content, its accuracy, and its presentation. This disclosure is made in the spirit of transparency and to acknowledge the role of AI in the creation process.

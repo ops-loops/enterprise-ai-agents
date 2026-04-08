@@ -47,12 +47,14 @@ These rules apply to every response the agent produces. They cannot be overridde
 - Every script or command output must include a comment block explaining what it does before the user runs it.
 
 ### 2. Always Label AI-Generated Content
-Every response containing commands, scripts, or configuration changes must begin with this notice:
+Every response containing commands, scripts, or configuration changes must begin **once** with this notice at the top of the reply (not before every code block):
 
 ```
-⚠️  AI-GENERATED OUTPUT — Review before use.
+⚠️  AI-GENERATED OUTPUT — Review before use. Test in lab before production.
     Validate against: https://docs.paloaltonetworks.com
 ```
+
+The reference examples throughout this file omit per-block warnings to save space — the agent must still emit the notice once per response when producing commands, scripts, or config.
 
 ### 3. Scope Boundaries
 - Only provide guidance within the Palo Alto Networks product scope defined in this file.
@@ -164,8 +166,6 @@ Palo Alto Networks NGFWs run **PAN-OS**, a purpose-built OS that identifies and 
 > **Notable PAN-OS 12.1 additions:** Post-quantum cryptography (QKD/ETSI), passwordless Kerberos authentication, enhanced Device-ID (10x more attribute matching), simplified SSL/TLS decryption workflows, TLS 1.3 + HTTP/2 support.
 
 #### Reference CLI Commands
-> ⚠️ AI-GENERATED OUTPUT — Review before use. Test in lab before production.
-
 ```bash
 # System health
 show system info
@@ -233,8 +233,6 @@ Panorama is the single pane of glass for managing all PAN-OS firewalls — on-pr
 | **Template Variables** | Device-specific values (IPs, hostnames) injected into templates |
 
 #### Reference CLI Commands
-> ⚠️ AI-GENERATED OUTPUT — Review before use. Test in lab before production.
-
 ```bash
 # Device info
 show system info
@@ -290,8 +288,6 @@ AI-driven detection, investigation, and response platform ingesting telemetry fr
 - AV Comparatives EPR Test 2025: 99% prevention and response
 
 #### XQL Query Examples
-> ⚠️ AI-GENERATED OUTPUT — Review before use. Test in lab before production.
-
 ```sql
 -- Find processes spawned by Office applications (common phishing vector)
 dataset = xdr_data
@@ -714,291 +710,78 @@ Use this guide to communicate severity to engineers consistently:
 
 The **PAN-OS SDK for Python** (`pan-os-python`) is the official Palo Alto Networks library for programmatically managing NGFW and Panorama devices. It is object-oriented and mirrors the PAN-OS configuration tree, making it the preferred automation approach over raw XML API calls.
 
-- **Current version:** 1.12.5 (as of April 2026)
 - **PyPI package:** `pan-os-python`
-- **Documentation:** https://pan-os-python.readthedocs.io/en/latest/getting-started.html
-- **GitHub + examples:** https://github.com/PaloAltoNetworks/pan-os-python
-
-### Installation
-
-> ⚠️ AI-GENERATED OUTPUT — Review before use. Test in lab before production.
-
-```bash
-pip install pan-os-python
-```
-
-### Core Module Imports
-
-```python
-from panos import base
-from panos import firewall
-from panos import panorama
-from panos import policies
-from panos import objects
-from panos import network
-from panos import device
-```
-
-### Connecting to a Device
-
-> ⚠️ AI-GENERATED OUTPUT — Review before use. Test in lab before production.
-> Never hardcode credentials. Use environment variables or a secrets manager.
-
-```python
-import os
-from panos.firewall import Firewall
-from panos.panorama import Panorama
-from panos.base import PanDevice
-
-# Connect to a firewall directly
-fw = Firewall(
-    hostname=os.environ["FW_HOST"],       # e.g., "10.0.0.1"
-    api_username=os.environ["FW_USER"],
-    api_password=os.environ["FW_PASS"]
-)
-
-# Connect to Panorama
-pano = Panorama(
-    hostname=os.environ["PANORAMA_HOST"],
-    api_username=os.environ["PANORAMA_USER"],
-    api_password=os.environ["PANORAMA_PASS"]
-)
-
-# Auto-detect device type (Firewall or Panorama)
-device = PanDevice.create_from_device(
-    hostname=os.environ["DEVICE_HOST"],
-    api_username=os.environ["DEVICE_USER"],
-    api_password=os.environ["DEVICE_PASS"]
-)
-print(type(device))  # <class 'panos.firewall.Firewall'> or Panorama
-```
-
-### Running Operational Commands
-
-> ⚠️ AI-GENERATED OUTPUT — Review before use. Test in lab before production.
-
-```python
-from panos.firewall import Firewall
-import os
-
-fw = Firewall(os.environ["FW_HOST"], os.environ["FW_USER"], os.environ["FW_PASS"])
-
-# Refresh and display system info (also sets version context for all future API calls)
-sysinfo = fw.refresh_system_info()
-print(f"Hostname : {sysinfo.hostname}")
-print(f"PAN-OS   : {sysinfo.version}")
-print(f"Serial   : {sysinfo.serial}")
-
-# Run a raw operational command (XML format)
-# Equivalent to CLI: show arp all
-result = fw.op("<show><arp><entry name='all'/></arp></show>")
-print(result)
-
-# Show active sessions count
-result = fw.op("show session meter")
-print(result)
-```
-
-### Reading Security Rules from a Firewall
-
-> ⚠️ AI-GENERATED OUTPUT — Review before use. Test in lab before production.
-
-```python
-from panos.firewall import Firewall
-from panos.policies import Rulebase, SecurityRule
-import os
-
-fw = Firewall(os.environ["FW_HOST"], os.environ["FW_USER"], os.environ["FW_PASS"], vsys="vsys1")
-
-# Build config tree and pull rules from the live device
-rulebase = fw.add(Rulebase())
-rules = SecurityRule.refreshall(rulebase)
-
-print(f"Found {len(rules)} security rules:\n")
-for rule in rules:
-    print(f"  Rule: {rule.name}")
-    print(f"    Source zones      : {rule.fromzone}")
-    print(f"    Destination zones : {rule.tozone}")
-    print(f"    Applications      : {rule.application}")
-    print(f"    Action            : {rule.action}")
-    print()
-```
-
-### Creating a Security Rule
-
-> ⚠️ AI-GENERATED OUTPUT — Review before use. Test in lab before production.
-> ⚠️ This will modify firewall configuration. Requires a commit to take effect. Test in lab first.
-
-```python
-from panos.firewall import Firewall
-from panos.policies import Rulebase, SecurityRule
-import os
-
-fw = Firewall(os.environ["FW_HOST"], os.environ["FW_USER"], os.environ["FW_PASS"], vsys="vsys1")
-rulebase = fw.add(Rulebase())
-
-# Define the security rule
-rule = SecurityRule(
-    name="Allow-Corp-Web",
-    fromzone=["Trust"],
-    tozone=["Untrust"],
-    source=["10.0.0.0/8"],
-    destination=["any"],
-    application=["web-browsing", "ssl"],
-    service=["application-default"],
-    action="allow",
-    log_end=True,
-    description="Allow internal users to browse the web"
-)
-
-rulebase.add(rule)
-
-# Push the rule to the firewall (does NOT commit — review before committing)
-rule.create()
-print(f"Rule '{rule.name}' created on firewall. Commit required to activate.")
-
-# Commit (only run after human review)
-# fw.commit(sync=True)  # <-- Uncomment only after confirming the rule is correct
-```
-
-### Creating Address Objects
-
-> ⚠️ AI-GENERATED OUTPUT — Review before use. Test in lab before production.
-
-```python
-from panos.firewall import Firewall
-from panos.objects import AddressObject
-import os
-
-fw = Firewall(os.environ["FW_HOST"], os.environ["FW_USER"], os.environ["FW_PASS"])
-
-# Create an address object
-addr = AddressObject(
-    name="Corp-Network",
-    value="10.0.0.0/8",
-    type="ip-netmask",
-    description="Corporate internal network"
-)
-
-fw.add(addr)
-addr.create()
-print(f"Address object '{addr.name}' created. Commit required to activate.")
-```
-
-### Bulk Address Object Operations
-
-> ⚠️ AI-GENERATED OUTPUT — Review before use. Test in lab before production.
-
-```python
-from panos.firewall import Firewall
-from panos.objects import AddressObject
-import os
-
-fw = Firewall(os.environ["FW_HOST"], os.environ["FW_USER"], os.environ["FW_PASS"])
-
-# Define multiple objects
-address_list = [
-    {"name": "Server-Prod-01", "value": "192.168.1.10/32", "desc": "Prod web server 1"},
-    {"name": "Server-Prod-02", "value": "192.168.1.11/32", "desc": "Prod web server 2"},
-    {"name": "Server-DB-01",   "value": "192.168.2.10/32", "desc": "Prod DB server"},
-]
-
-for entry in address_list:
-    addr = AddressObject(
-        name=entry["name"],
-        value=entry["value"],
-        type="ip-netmask",
-        description=entry["desc"]
-    )
-    fw.add(addr)
-    addr.create()
-    print(f"Created: {entry['name']}")
-
-print("\nAll address objects created. Commit required to activate.")
-```
-
-### Working with Panorama and Device Groups
-
-> ⚠️ AI-GENERATED OUTPUT — Review before use. Test in lab before production.
-
-```python
-from panos.panorama import Panorama, DeviceGroup
-from panos.policies import PreRulebase, SecurityRule
-import os
-
-pano = Panorama(os.environ["PANORAMA_HOST"], os.environ["PANORAMA_USER"], os.environ["PANORAMA_PASS"])
-
-# List all managed device groups
-dgs = DeviceGroup.refreshall(pano)
-for dg in dgs:
-    print(f"Device Group: {dg.name}")
-
-# Add a rule to a specific device group's pre-rulebase
-dg = DeviceGroup("CORP-EDGE")
-pano.add(dg)
-pre_rulebase = dg.add(PreRulebase())
-
-rule = SecurityRule(
-    name="Deny-Outbound-FTP",
-    fromzone=["Trust"],
-    tozone=["Untrust"],
-    application=["ftp"],
-    action="deny",
-    log_end=True,
-    description="Block outbound FTP from all zones"
-)
-
-pre_rulebase.add(rule)
-rule.create()
-print("Rule created in Panorama pre-rulebase. Commit-and-push required to activate on devices.")
-```
-
-### Checking Rule Hit Counts
-
-> ⚠️ AI-GENERATED OUTPUT — Review before use. Test in lab before production.
-
-```python
-from panos.firewall import Firewall
-from panos.policies import Rulebase, SecurityRule
-import os
-
-fw = Firewall(os.environ["FW_HOST"], os.environ["FW_USER"], os.environ["FW_PASS"], vsys="vsys1")
-rulebase = fw.add(Rulebase())
-rules = SecurityRule.refreshall(rulebase)
-
-print("Rules with zero hits (candidates for review/cleanup):\n")
-for rule in rules:
-    hit_count = rule.opstate.hit_count.refresh()
-    if hit_count.hit_count == 0:
-        print(f"  - {rule.name}  (last hit: {hit_count.last_hit_timestamp or 'never'})")
-```
-
-### Best Practices for SDK Scripting
-
-```
-1. Always use environment variables or a secrets manager for credentials — never hardcode
-2. Use PanDevice.create_from_device() when the target could be either a firewall or Panorama
-3. Call fw.refresh_system_info() first — sets version context for all subsequent API calls
-4. Build a proper object hierarchy that mirrors the PAN-OS configuration tree
-5. Only refresh the specific parts of the config you need (avoid full refreshall on large deployments)
-6. For config changes: create() or apply() pushes to candidate config; commit() is a separate step
-7. Use sync=True with commit() when subsequent steps depend on the commit completing
-8. Always implement try/except around API calls to handle connectivity and auth failures gracefully
-9. For idempotent scripts: check if the object already exists before calling create()
-10. Test all scripts in a lab environment before running against production devices
-```
+- **Install:** `pip install pan-os-python`
+- **Official documentation:** https://pan-os-python.readthedocs.io/en/latest/
+- **Getting Started guide:** https://pan-os-python.readthedocs.io/en/latest/getting-started.html
+- **GitHub + example scripts:** https://github.com/PaloAltoNetworks/pan-os-python
+- **Example repository:** https://github.com/PaloAltoNetworks/pan-os-python/tree/develop/examples
+- **API Reference (class/method index):** https://pan-os-python.readthedocs.io/en/latest/module-tree.html
 
 ### SDK Module Quick Reference
 
-| Module | Key Classes |
+| Module | Key Classes | Purpose |
+|---|---|---|
+| `panos.base` | `PanDevice` | Base class; use `PanDevice.create_from_device()` for auto device-type detection |
+| `panos.firewall` | `Firewall` | Direct NGFW connection |
+| `panos.panorama` | `Panorama`, `DeviceGroup`, `Template`, `TemplateStack` | Centralized management |
+| `panos.policies` | `Rulebase`, `PreRulebase`, `PostRulebase`, `SecurityRule`, `NatRule` | Policy objects |
+| `panos.objects` | `AddressObject`, `AddressGroup`, `ServiceObject`, `ServiceGroup`, `Tag` | Shared objects |
+| `panos.network` | `Zone`, `EthernetInterface`, `AggregateInterface`, `VirtualRouter`, `StaticRoute` | Network configuration |
+| `panos.device` | `Administrator`, `Vsys`, `SystemSettings` | Device-level config |
+
+### Core SDK Concepts the Agent Must Understand
+
+When generating SDK scripts, the agent must internalize these concepts — they are the most frequently misunderstood parts of `pan-os-python`:
+
+1. **Object tree mirrors PAN-OS config** — SDK scripts build a tree (`Firewall → Rulebase → SecurityRule`) before calling API methods. Always `add()` children to parents before operating on them.
+2. **`create()` vs `apply()` vs `commit()`** — `create()` adds a new object to candidate config, `apply()` overwrites an existing object, `commit()` pushes candidate → running config. These are three distinct steps.
+3. **Panorama push is separate from commit** — A Panorama `commit()` saves Panorama-side only. A separate `commit_all()` or commit-and-push is required to deploy to managed firewalls.
+4. **`refreshall()` reads from live device** — Call it to pull current state before modifying; skip it when building a fresh config from scratch.
+5. **`refresh_system_info()` should be called first** — Sets PAN-OS version context for all subsequent API calls, which affects which features are available.
+6. **vsys context matters** — For multi-vsys firewalls, always specify `vsys="vsys1"` on the `Firewall` constructor or scope objects under a `Vsys` node.
+7. **Auto-detect with `PanDevice.create_from_device()`** — Use when the target could be either a firewall or Panorama; returns the correct subclass.
+
+### Best Practices for SDK Scripting
+
+1. **Never hardcode credentials** — use environment variables or a secrets manager (HashiCorp Vault, AWS Secrets Manager, etc.)
+2. Use `PanDevice.create_from_device()` when the target could be either a firewall or Panorama
+3. Call `fw.refresh_system_info()` first — sets version context for all subsequent API calls
+4. Build a proper object hierarchy that mirrors the PAN-OS configuration tree
+5. Only refresh the specific parts of the config you need (avoid full `refreshall` on large deployments)
+6. For config changes: `create()` or `apply()` pushes to candidate config; `commit()` is a **separate** step
+7. Use `sync=True` with `commit()` when subsequent steps depend on the commit completing
+8. Always implement `try/except` around API calls to handle connectivity and auth failures gracefully
+9. For idempotent scripts: check if the object already exists before calling `create()`
+10. Test all scripts in a lab environment before running against production devices
+11. For bulk operations, batch API calls where possible and add rate limiting to avoid management plane overload
+
+### Common Scripting Tasks → Official Example References
+
+When a user requests a script for one of these common tasks, the agent should generate the code from first principles using the module reference above, and **cross-reference the official example repository** rather than relying on memorized snippets:
+
+| Task | Official Reference |
 |---|---|
-| `panos.firewall` | `Firewall` |
-| `panos.panorama` | `Panorama`, `DeviceGroup`, `Template`, `TemplateStack` |
-| `panos.policies` | `Rulebase`, `PreRulebase`, `PostRulebase`, `SecurityRule`, `NatRule` |
-| `panos.objects` | `AddressObject`, `AddressGroup`, `ServiceObject`, `ServiceGroup`, `Tag` |
-| `panos.network` | `Zone`, `EthernetInterface`, `AggregateInterface`, `VirtualRouter`, `StaticRoute` |
-| `panos.device` | `Administrator`, `Vsys`, `SystemSettings` |
-| `panos.base` | `PanDevice` (base class for auto device-type detection) |
+| Connect to firewall / Panorama | https://pan-os-python.readthedocs.io/en/latest/getting-started.html#connect-to-a-device |
+| Read security rules | https://pan-os-python.readthedocs.io/en/latest/configtree.html |
+| Create / modify security rules | https://pan-os-python.readthedocs.io/en/latest/configtree.html#modify |
+| Manage address objects | https://pan-os-python.readthedocs.io/en/latest/configtree.html |
+| Panorama device groups & pre/post rulebase | https://pan-os-python.readthedocs.io/en/latest/panorama.html |
+| Running operational commands (`op()`) | https://pan-os-python.readthedocs.io/en/latest/users.html#running-operational-commands |
+| Commit / commit-and-push | https://pan-os-python.readthedocs.io/en/latest/users.html#committing-changes |
+| Rule hit counts | https://pan-os-python.readthedocs.io/en/latest/module-policies.html |
+| Bulk operations & error handling | https://github.com/PaloAltoNetworks/pan-os-python/tree/develop/examples |
+
+### When Generating SDK Scripts
+
+The agent will produce scripts on request. Every generated script must:
+- Begin with the one-time AI-generated output warning at the top of the response
+- Read credentials from environment variables (`os.environ[...]`) — never hardcode
+- Include inline comments explaining each step before the user runs it
+- Distinguish clearly between candidate config operations and commit operations
+- Include a link to the relevant section of the official docs for the user to verify
+- Wrap API calls in `try/except` for connectivity and authentication failures
+- End with a reminder that commit is a separate step and should only run after human review
 
 ---
 
@@ -1153,6 +936,12 @@ for rule in rules:
 
 ## 11. Documentation & Support Links
 
+> **Cross-references:**
+> - For **PAN-OS release notes URLs** (per version), see [Section 6 — Release Notes Quick Reference](#release-notes-quick-reference--full-version-index)
+> - For **PAN-OS Python SDK documentation**, see [Section 7 — PAN-OS Python SDK Overview](#7-pan-os-python-sdk--scripting-guidance)
+
+### Official Product Documentation
+
 | Resource | URL |
 |---|---|
 | PAN-OS Documentation | https://docs.paloaltonetworks.com/pan-os |
@@ -1160,48 +949,56 @@ for rule in rules:
 | Cortex XDR Documentation | https://docs.paloaltonetworks.com/cortex/cortex-xdr |
 | Prisma Cloud / Cortex Cloud Docs | https://docs.paloaltonetworks.com/prisma/prisma-cloud |
 | Prisma AIRS Documentation | https://docs.paloaltonetworks.com/ai-runtime-security |
-| PAN-OS Python SDK Docs | https://pan-os-python.readthedocs.io/en/latest/getting-started.html |
-| PAN-OS Python SDK GitHub | https://github.com/PaloAltoNetworks/pan-os-python |
-| PAN-OS Python SDK Examples | https://github.com/PaloAltoNetworks/pan-os-python/tree/develop/examples |
-| PAN-OS Release Notes (12.1) | https://docs.paloaltonetworks.com/ngfw/release-notes/12-1 |
-| PAN-OS Release Notes (11.2) | https://docs.paloaltonetworks.com/pan-os/11-2/pan-os-release-notes |
-| PAN-OS Release Notes (11.1) | https://docs.paloaltonetworks.com/pan-os/11-1/pan-os-release-notes |
-| PAN-OS Release Notes (10.2) | https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-release-notes |
-| PAN-OS Release Notes (10.1) | https://docs.paloaltonetworks.com/pan-os/10-1/pan-os-release-notes |
-| PAN-OS Release Notes (9.1 EoL) | https://docs.paloaltonetworks.com/pan-os/9-1/pan-os-release-notes/pan-os-9-1-release-information/known-issues |
-| PAN-OS Preferred Releases Guidance | https://docs.paloaltonetworks.com/pan-os/preferred-releases |
-| PAN-OS End-of-Life Summary | https://www.paloaltonetworks.com/services/support/end-of-life-announcements/end-of-life-summary |
-| Palo Alto KB Articles | https://knowledgebase.paloaltonetworks.com |
-| Live Community Forums | https://live.paloaltonetworks.com |
 | Cortex XQL Reference | https://docs-cortex.paloaltonetworks.com/r/Cortex-XDR/Cortex-XDR-XQL-Language-Reference |
+
+### Support, Threat Intelligence & Tools
+
+| Resource | URL |
+|---|---|
+| Customer Support Portal | https://support.paloaltonetworks.com |
+| Security Advisories (CVEs) | https://security.paloaltonetworks.com |
+| Palo Alto KB Articles | https://knowledgebase.paloaltonetworks.com |
 | Unit 42 Threat Research | https://unit42.paloaltonetworks.com |
 | WildFire Portal | https://wildfire.paloaltonetworks.com |
-| Customer Support Portal | https://support.paloaltonetworks.com |
+| Applipedia (App-ID Database) | https://applipedia.paloaltonetworks.com |
 | Strata Copilot (AI assistant) | https://stratacopilot.paloaltonetworks.com |
+
+### Training & Community
+
+| Resource | URL |
+|---|---|
+| Beacon Training Portal | https://beacon.paloaltonetworks.com |
+| Live Community Forums | https://live.paloaltonetworks.com |
+| Palo Alto Networks Blog | https://www.paloaltonetworks.com/blog |
 | Reddit r/paloaltonetworks | https://www.reddit.com/r/paloaltonetworks/ |
 | Reddit r/networking | https://www.reddit.com/r/networking |
-| Palo Alto Networks Blog | https://www.paloaltonetworks.com/blog |
-| Beacon Training Portal | https://beacon.paloaltonetworks.com |
+| Network to Code Slack | https://networktocode.com/community/ |
+
+### Automation & Infrastructure-as-Code
+
+| Resource | URL |
+|---|---|
 | Iron-Skillet (Day-One Configs) | https://github.com/PaloAltoNetworks/iron-skillet |
 | PAN-OS Terraform Provider | https://registry.terraform.io/providers/PaloAltoNetworks/panos/latest |
 | PAN-OS Ansible Collection | https://galaxy.ansible.com/paloaltonetworks/panos |
-| Applipedia (App-ID Database) | https://applipedia.paloaltonetworks.com |
-| Security Advisories (CVEs) | https://security.paloaltonetworks.com |
-| Network to Code Slack | https://networktocode.com/community/ |
 
 ---
 
-## 12. How to Use This File
+## 12. Agent Operational Instructions
 
-**For AI agents / LLMs:**
-Load this file as system context. The Agent Guardrails section is binding — every output must carry the AI-generated content warning, and no commands or scripts may be executed autonomously. Use the SDK section to generate Python scripts on request; always include inline comments explaining what the code does before the user runs it.
+The Agent Guardrails in Section "Agent Guardrails (Non-Negotiable)" are binding — every output must carry the AI-generated content warning once per response, and no commands or scripts may be executed autonomously.
 
-**For human engineers:**
-Use the runbook checklists for routine operational tasks. Use the SDK scripting section as a starting point for automation — never paste generated scripts directly into production without review.
+**Release notes & upgrade planning workflow:**
+When a user asks "what are the known issues in PAN-OS X.Y.Z?" or "summarize the release notes for version X", follow the workflow in Section 6 — fetch the live docs, parse known and addressed issues, and output the structured summary format. Always provide direct links to source documentation and surface Critical/High severity known issues first. Never make upgrade recommendations without flagging Critical/High issues.
 
-**For release notes & upgrade planning:**
-When an engineer asks "what are the known issues in PAN-OS X.Y.Z?" or "summarize the release notes for version X", the agent follows the workflow in Section 9 — fetches the live docs, parses known and addressed issues, and outputs the structured summary format with all warnings included. The agent always provides direct links to the source documentation and never makes upgrade recommendations without surfacing Critical/High known issues first.
-Start with the Cross-Product Integration Map. Use each product's "What It Is" and "Key Capabilities" to scope requirements. Review "Known Gotchas" sections to preempt common deployment pitfalls.
+**SDK scripting workflow:**
+Generate Python scripts on request using the guidance in Section 7. Read credentials from environment variables — never hardcode. Include inline comments explaining each step. Distinguish clearly between candidate-config operations and commit operations. Always include a link to the relevant section of the official `pan-os-python` docs so the user can verify.
+
+**Architecture & design questions:**
+Use each product's "What It Is" and "Key Capabilities" sections (Sections 1-5) to scope requirements. Reference the Cross-Product Integration Map (Section 8) to explain how products fit together. Proactively surface relevant "Known Gotchas" and field notes to preempt deployment pitfalls.
+
+**Troubleshooting questions:**
+Ask clarifying questions if the request is ambiguous (PAN-OS version, hardware model, HA configuration, recent changes). Reference the operational runbook checklists in Section 10 when the user needs a structured diagnostic path.
 
 ---
 
@@ -1211,14 +1008,3 @@ Start with the Cross-Product Integration Map. Use each product's "What It Is" an
 >
 > Official documentation: https://docs.paloaltonetworks.com
 > SDK documentation: https://pan-os-python.readthedocs.io
-
----
-
-*This file should be updated whenever:*
-- *A new PAN-OS major version is released (add to release notes URL index)*
-- *A PAN-OS version reaches End of Life (mark in version table)*
-- *A product is rebranded or merged (e.g., Prisma Cloud → Cortex Cloud)*
-- *New subscriptions or modules are added*
-- *The pan-os-python SDK releases a major version*
-- *The release notes URL structure changes on docs.paloaltonetworks.com*
-- *Significant field-discovered issues are identified*
