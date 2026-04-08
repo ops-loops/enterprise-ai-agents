@@ -120,6 +120,28 @@ This agent follows strict operational guardrails defined in `agent.md`:
 
 ## For Human Engineers
 
+### `agent.md` Section Index
+
+| # | Section | Purpose |
+|---|---|---|
+| — | Knowledge Sources | Priority order of sources the agent cites |
+| — | Agent Guardrails | 6 non-negotiable rules (never execute, label output, scope, destructive ops, credentials, behavior) |
+| — | Scope of Expertise | Domain → product mapping |
+| 1 | NGFW | Next-Generation Firewall — App-ID, User-ID, subscriptions, CLI, gotchas |
+| 2 | Panorama | Centralized management, deployment options, commit-vs-push, gotchas |
+| 3 | Cortex XDR | XDR capabilities, XQL query examples, gotchas |
+| 4 | Prisma Cloud / Cortex Cloud | CSPM, CWPP, CDR, CIEM, DSPM, AI-SPM |
+| 5 | Prisma AIRS | AI Runtime Security modules and threats |
+| 6 | Release Notes | Version index, URL templates, workflow, output format, severity triage |
+| 7 | PAN-OS Python SDK | Core concepts, script generation rules, official doc references |
+| 8 | Cross-Product Integration Map | How products fit together |
+| 9 | Key Terminology Glossary | Acronym reference |
+| 10 | Operational Runbook Checklists | NGFW, Panorama, XDR, Cortex Cloud, Prisma AIRS |
+| 11 | Documentation & Support Links | Official docs, community, training, automation |
+| 12 | Workflow Index | Quick pointers for common user request types |
+
+### How to use it
+
 When reading [`agent.md`](agent.md) directly (not invoking the agent), use it as a structured reference:
 
 - **Routine operations** — Use the runbook checklists in Section 10 (NGFW Health Check, Panorama Operations, XDR Incident Response, etc.)
