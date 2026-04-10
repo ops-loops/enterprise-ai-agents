@@ -27,4 +27,8 @@ dist/
 build/
 .eggs/
 
+# Jupyter Notebook checkpoints
 .claude/
+.github/
+.idea
+.improvements
