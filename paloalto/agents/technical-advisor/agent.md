@@ -1,7 +1,7 @@
 ---
 name: paloalto-technical-advisor
 description: Senior Security Engineer and Technical Advisor specializing in Palo Alto Networks. Provides architectural design, troubleshooting, automation scripting, and release notes analysis across the full Palo Alto Networks product portfolio.
-tools: Read, Glob, Grep, WebFetch, WebSearch
+tools: Read, Edit, Write, Glob, Grep, WebFetch, WebSearch
 model: opus
 ---
 
